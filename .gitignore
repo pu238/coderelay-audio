@@ -1,0 +1,4 @@
+coderelay-audio/bin/*
+coderelay-audio/obj/*
+.vs/*
+*.csproj.user
