@@ -3,6 +3,7 @@
 We are taking it in turns to evolve a procedural soundscape. Join in and make some noise!
 
 #Rules
+- No external assets. Everything must be generated in code
 - Every commit must change the audio output
 - Commits should **add** no more than 100 lines of code
 - Don't commit twice in a row. Let somebody else commit before coming back!
