@@ -2,39 +2,66 @@
 {
     double[] wavetable;
     double[] destbuffer;
-    long offset = 0;
+    long destOffset = 0;
     bool on;
 
+    double speed = 1.0;
+    double srcOffset = 0.0;
+
+    // Wavetable should be a short looping sample that crosses 0 at the start and end, destbuffer is the render destination
     public WavetablePlayer(double [] wavetable, double [] destbuffer)
     {
         this.wavetable = wavetable;
         this.destbuffer = destbuffer;
     }
 
-    public void On()
+    public void NoteOn()
     {
         on = true;
     }
 
-    public void Off()
+    public void NoteOff()
     {
         on = false;
     }
 
+    // TODO: implement table reference pitch and pitch offset calc and replace this with SetTone?
+    public void SetSpeed(double speed)
+    {
+        this.speed = speed;
+    }
+
     public void Render(int samples)
     {
-        long newOffset = offset + samples;
+        long newOffset = destOffset + samples;
 
         if (newOffset > destbuffer.Length)
             newOffset = destbuffer.Length;
 
-        for (; offset < newOffset; ++offset)
+        for (; destOffset < newOffset; ++destOffset)
         {
-            // This is gonna clip like crazy but I don't have enough lines this commit to make it nice
-            if (on)
-                destbuffer[offset] = wavetable[offset % wavetable.Length];
+            // Only start playing the sample if 'on' is set, otherwise if we're mid sample,
+            //  keep playing it to the end so we don't clip
+            if (srcOffset > 0.0 || on)
+            {
+                destbuffer[destOffset] = TableUtils.Sample(wavetable, srcOffset);
+                srcOffset = srcOffset + speed;
+
+                // Loop if note still on
+                if (on)
+                {
+                    srcOffset = srcOffset % wavetable.Length;
+                }
+                else
+                {
+                    if (srcOffset > wavetable.Length)
+                        srcOffset = 0.0;
+                }
+            }
             else
-                destbuffer[offset] = 0.0;
+            {
+                destbuffer[destOffset] = 0.0;
+            }
         }
     }
 }

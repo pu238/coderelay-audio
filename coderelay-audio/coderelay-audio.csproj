@@ -44,6 +44,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Arguments.cs" />
+    <Compile Include="MathUtil.cs" />
+    <Compile Include="TableUtils.cs" />
     <Compile Include="WavetablePlayer.cs" />
     <Compile Include="Mixer.cs" />
     <Compile Include="Program.cs" />

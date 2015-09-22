@@ -10,7 +10,11 @@ class Program
     {
         Arguments arguments = new Arguments(args);
 
+
         const int tableSamples = 200;
+        const int tones = 20;
+        const int toneLength = 8000;
+        const int trackLength = toneLength * tones * 4;
         // Generate a single sine wave period
         double[] sineTable = new double[tableSamples];
         for (int i = 0; i < tableSamples; ++i)
@@ -18,15 +22,17 @@ class Program
             sineTable[i] = Math.Sin(2.0 * Math.PI * (double)i / (double)tableSamples);
         }
 
-        int tones = 10;
-        double[] sineData = new double[tableSamples * tones * 128];
+        Random randomNotes = new Random(111);
+
+        double[] sineData = new double[trackLength];
         WavetablePlayer sineChannel = new WavetablePlayer(sineTable, sineData);
         for (int i = 0; i < tones; ++i)
         {
-            sineChannel.On();
-            sineChannel.Render(tableSamples * 32);
-            sineChannel.Off();
-            sineChannel.Render(tableSamples * 96);
+            sineChannel.SetSpeed(randomNotes.NextDouble() * 2.0 + 0.75);
+            sineChannel.NoteOn();
+            sineChannel.Render(toneLength);
+            sineChannel.NoteOff();
+            sineChannel.Render(toneLength * 3);
         }
 
         // Generate a single square wave period
@@ -37,20 +43,19 @@ class Program
         }
 
         // Fill a buffer with square wave
-        double[] squareData = new double[tableSamples * tones * 128];
+        double[] squareData = new double[trackLength];
         WavetablePlayer squareChanel = new WavetablePlayer(squareTable, squareData);
         for (int i = 0; i < tones; ++i)
         {
-            squareChanel.Render(tableSamples * 64);
-            squareChanel.On();
-            squareChanel.Render(tableSamples * 32);
-            squareChanel.Off();
-            squareChanel.Render(tableSamples * 32);
+            squareChanel.SetSpeed(randomNotes.NextDouble() * 2.0 + 0.75);
+            squareChanel.Render(toneLength * 2);
+            squareChanel.NoteOn();
+            squareChanel.Render(toneLength);
+            squareChanel.NoteOff();
+            squareChanel.Render(toneLength);
         }
-
-        Noise noise = new Noise();
-
-        double[] finalData = Mixer.Mix(sineData, squareData, noise.GenerateBrownNoise(30000, tableSamples, tones, SampleRate));
+        
+        double[] finalData = Mixer.Mix(sineData, squareData, Noise.GenerateBrownNoise(trackLength));
 
         // Generate file
         WavFile.WriteFile(arguments.Output, SampleRate, finalData, finalData);
