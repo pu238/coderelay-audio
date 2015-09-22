@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using coderelay_audio;
 
 class Program
 {
@@ -47,7 +48,9 @@ class Program
             squareChanel.Render(tableSamples * 32);
         }
 
-        double[] finalData = Mixer.Mix(sineData, squareData);
+        WhiteNoise noise = new WhiteNoise();
+
+        double[] finalData = Mixer.Mix(sineData, squareData, noise.Generate(30000, tableSamples, tones, SampleRate));
 
         // Generate file
         WavFile.WriteFile(arguments.Output, SampleRate, finalData, finalData);
