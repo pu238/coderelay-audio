@@ -48,9 +48,9 @@ class Program
             squareChanel.Render(tableSamples * 32);
         }
 
-        WhiteNoise noise = new WhiteNoise();
+        Noise noise = new Noise();
 
-        double[] finalData = Mixer.Mix(sineData, squareData, noise.Generate(30000, tableSamples, tones, SampleRate));
+        double[] finalData = Mixer.Mix(sineData, squareData, noise.GenerateBrownNoise(30000, tableSamples, tones, SampleRate));
 
         // Generate file
         WavFile.WriteFile(arguments.Output, SampleRate, finalData, finalData);
