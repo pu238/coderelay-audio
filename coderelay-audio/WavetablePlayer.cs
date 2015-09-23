@@ -7,12 +7,14 @@
 
     double speed = 1.0;
     double srcOffset = 0.0;
+    double referenceFrequency;
 
     // Wavetable should be a short looping sample that crosses 0 at the start and end, destbuffer is the render destination
-    public WavetablePlayer(double [] wavetable, double [] destbuffer)
+    public WavetablePlayer(double [] wavetable, double [] destbuffer, double referenceFrequency = 440.0)
     {
         this.wavetable = wavetable;
         this.destbuffer = destbuffer;
+        this.referenceFrequency = referenceFrequency;
     }
 
     public void NoteOn()
@@ -29,6 +31,13 @@
     public void SetSpeed(double speed)
     {
         this.speed = speed;
+    }
+
+    public void SetNote(int note)
+    {
+        double noteFrequency = MathUtils.MidiNoteToFrequency(note);
+
+        speed = noteFrequency / referenceFrequency;
     }
 
     public void Render(int samples)
