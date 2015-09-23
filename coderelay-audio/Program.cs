@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using coderelay_audio;
 
 class Program
 {
@@ -10,8 +9,7 @@ class Program
     static void Main(string[] args)
     {
         Arguments arguments = new Arguments(args);
-
-
+        
         const int tableSamples = 200;
         const int tones = 20;
         const int toneLength = 8000;

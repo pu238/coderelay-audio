@@ -22,9 +22,11 @@ class Mixer
             }
         }
 
+        var peak = output.Select(Math.Abs).Max();
+
         for (var i = 0; i < outputLength; i++)
         {
-            output[i] /= sampleBuffers.Length;
+            output[i] /= peak;
         }
 
         return output;
