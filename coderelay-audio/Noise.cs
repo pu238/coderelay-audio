@@ -4,9 +4,9 @@ namespace coderelay_audio
 {
     public class Noise
     {
-        public static double[] GenerateWhiteNoise(int samples)
+        public static double[] GenerateWhiteNoise(int samples, int seed)
         {
-            Random rand = new Random();
+            Random rand = new Random(seed);
             double[] noise = new double[samples];
             for (int i = 0; i < samples; ++i)
             {
@@ -16,9 +16,9 @@ namespace coderelay_audio
             return noise;
         }
 
-        public static double[] GenerateBrownNoise(int samples)
+        public static double[] GenerateBrownNoise(int samples, int seed)
         {
-            Random rand = new Random();
+            Random rand = new Random(seed);
             double[] noiseTable = new double[samples];
             double[] averageTable = new double[samples];
             for (int i = 0; i < samples; ++i)
@@ -33,6 +33,5 @@ namespace coderelay_audio
 
             return averageTable;
         }
-
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using coderelay_audio;
 
@@ -54,8 +55,19 @@ class Program
             squareChanel.NoteOff();
             squareChanel.Render(toneLength);
         }
-        
-        double[] finalData = Mixer.Mix(sineData, squareData, Noise.GenerateBrownNoise(trackLength));
+
+        var guitar = new List<double>();
+
+        guitar.AddRange(Instrument.GuitarNote(SampleRate * 1, 100, 1, 32424));
+        guitar.AddRange(Instrument.GuitarNote(SampleRate * 1, 200, 1, 32424));
+        guitar.AddRange(Instrument.GuitarNote(SampleRate * 2, 100, 1, 32424));
+        guitar.AddRange(Instrument.GuitarNote(SampleRate * 1, 400, 1, 32424));
+        guitar.AddRange(Instrument.GuitarNote(SampleRate * 4, 100, 1, 32424));
+        guitar.AddRange(Instrument.GuitarNote(SampleRate * 1, 900, 5, 32424));
+        guitar.AddRange(Instrument.GuitarNote(SampleRate * 2, 100, 1, 32424));
+        guitar.AddRange(Instrument.GuitarNote(SampleRate * 1, 300, 1, 32424));
+
+        double[] finalData = Mixer.Mix(sineData, squareData, guitar.ToArray());
 
         // Generate file
         WavFile.WriteFile(arguments.Output, SampleRate, finalData, finalData);
