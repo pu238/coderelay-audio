@@ -46,27 +46,28 @@ class Program
         WavetablePlayer squareChanel = new WavetablePlayer(squareTable, squareData, 220.5);
 
         int[,] chords = new int[,] {
-            { 7, 10, 14 },
-            { 9, 12, 15 },
-            { 9, 5, 2 },
-            { 10, 7, 3 },
-            { 5, 9, 12 }
+            { 38, 30, 35, 30 },
+            { 38, 32, 35, 32 },
+            { 43, 35, 40, 35},
+            { 40, 33, 37, 33}
         };
 
         for (int i = 0; i < tones; ++i)
         {
-            int chord = i % 5;
-            int octaveOffset = 5 * 12;
+            int chord = i % chords.GetLength(0);
+            int octaveOffset = 4*8; //5 * 12
 
             for (int j = 0; j < 4; ++j)
             {
                 squareChanel.NoteOn();
                 squareChanel.SetNote(chords[chord, 0] + octaveOffset);
-                squareChanel.Render(toneLength / 3);
+                squareChanel.Render(toneLength/2);
                 squareChanel.SetNote(chords[chord, 1] + octaveOffset);
-                squareChanel.Render(toneLength / 3);
+                squareChanel.Render(toneLength/2);
                 squareChanel.SetNote(chords[chord, 2] + octaveOffset);
-                squareChanel.Render(toneLength / 3);
+                squareChanel.Render(toneLength/2);
+                squareChanel.SetNote(chords[chord, 3] + octaveOffset);
+                squareChanel.Render(toneLength/2);
                 squareChanel.NoteOff();
             }
         }
@@ -79,7 +80,7 @@ class Program
             guitar.AddRange(Instrument.String(SampleRate * rand.Next(1, 5), rand.Next(50, 700), rand.Next(1, 10), i));
         }
 
-        double[] finalData = Mixer.Mix(squareData, guitar.ToArray());
+        double[] finalData = Mixer.Mix(squareData); //guitar.ToArray()
 
         // Generate file
         WavFile.WriteFile(arguments.Output, SampleRate, finalData, finalData);
