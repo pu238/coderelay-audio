@@ -56,14 +56,11 @@ class Program
 
         var guitar = new List<double>();
 
-        guitar.AddRange(Instrument.GuitarNote(SampleRate * 1, 100, 1, 32424));
-        guitar.AddRange(Instrument.GuitarNote(SampleRate * 1, 200, 1, 32424));
-        guitar.AddRange(Instrument.GuitarNote(SampleRate * 2, 100, 1, 32424));
-        guitar.AddRange(Instrument.GuitarNote(SampleRate * 1, 400, 1, 32424));
-        guitar.AddRange(Instrument.GuitarNote(SampleRate * 4, 100, 1, 32424));
-        guitar.AddRange(Instrument.GuitarNote(SampleRate * 1, 900, 5, 32424));
-        guitar.AddRange(Instrument.GuitarNote(SampleRate * 2, 100, 1, 32424));
-        guitar.AddRange(Instrument.GuitarNote(SampleRate * 1, 300, 1, 32424));
+        for (int i = 0; i < 30; i++)
+        {
+            var rand = new Random(i);
+            guitar.AddRange(Instrument.String(SampleRate * rand.Next(1, 5), rand.Next(50, 700), rand.Next(1, 10), i));
+        }
 
         double[] finalData = Mixer.Mix(sineData, squareData, guitar.ToArray());
 
