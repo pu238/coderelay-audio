@@ -11,63 +11,39 @@ class Program
         Arguments arguments = new Arguments(args);
         
         const int tableSamples = 200;
+        const double tableFrequency = 44100.0 / tableSamples;
         const int tones = 20;
-        const int toneLength = 8000;
-        const int trackLength = toneLength * tones * 4;
-        // Generate a single sine wave period
-        double[] sineTable = new double[tableSamples];
-        for (int i = 0; i < tableSamples; ++i)
-        {
-            sineTable[i] = Math.Sin(2.0 * Math.PI * (double)i / (double)tableSamples);
-        }
+        const int toneLength = 4000;
+        const int trackLength = toneLength * tones*4;
 
         Random randomNotes = new Random(111);
 
-        double[] sineData = new double[trackLength];
-        WavetablePlayer sineChannel = new WavetablePlayer(sineTable, sineData);
-        for (int i = 0; i < tones; ++i)
-        {
-            sineChannel.SetSpeed(randomNotes.NextDouble() * 2.0 + 0.75);
-            sineChannel.NoteOn();
-            sineChannel.Render(toneLength);
-            sineChannel.NoteOff();
-            sineChannel.Render(toneLength * 3);
-        }
-
-        // Generate a single square wave period
-        double[] squareTable = new double[tableSamples];
-        for (int i = 0; i < tableSamples; ++i)
-        {
-            squareTable[i] = Math.Sin(2.0 * Math.PI * (double)i / (double)tableSamples) > 0 ? 1 : -1;
-        }
-
         // Fill a buffer with square wave
         double[] squareData = new double[trackLength];
-        WavetablePlayer squareChanel = new WavetablePlayer(squareTable, squareData, 220.5);
+        WavetablePlayer squareChanel = new WavetablePlayer(Generate.Saw(tableSamples), squareData);
 
         int[,] chords = new int[,] {
-            { 38, 30, 35, 30 },
-            { 38, 32, 35, 32 },
-            { 43, 35, 40, 35},
-            { 40, 33, 37, 33}
+            { 70, 62, 67, 62 },
+            { 70, 64, 67, 64 },
+            { 75, 67, 72, 67},
+            { 72, 65, 69, 65}
         };
 
         for (int i = 0; i < tones; ++i)
         {
             int chord = i % chords.GetLength(0);
-            int octaveOffset = 4*8; //5 * 12
 
             for (int j = 0; j < 4; ++j)
             {
                 squareChanel.NoteOn();
-                squareChanel.SetNote(chords[chord, 0] + octaveOffset);
-                squareChanel.Render(toneLength/2);
-                squareChanel.SetNote(chords[chord, 1] + octaveOffset);
-                squareChanel.Render(toneLength/2);
-                squareChanel.SetNote(chords[chord, 2] + octaveOffset);
-                squareChanel.Render(toneLength/2);
-                squareChanel.SetNote(chords[chord, 3] + octaveOffset);
-                squareChanel.Render(toneLength/2);
+                squareChanel.SetNote(chords[chord, 0]);
+                squareChanel.Render(toneLength);
+                squareChanel.SetNote(chords[chord, 1]);
+                squareChanel.Render(toneLength);
+                squareChanel.SetNote(chords[chord, 2]);
+                squareChanel.Render(toneLength);
+                squareChanel.SetNote(chords[chord, 3]);
+                squareChanel.Render(toneLength);
                 squareChanel.NoteOff();
             }
         }

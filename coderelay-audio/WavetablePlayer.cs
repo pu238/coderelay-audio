@@ -10,11 +10,18 @@
     double referenceFrequency;
 
     // Wavetable should be a short looping sample that crosses 0 at the start and end, destbuffer is the render destination
-    public WavetablePlayer(double [] wavetable, double [] destbuffer, double referenceFrequency = 440.0)
+    public WavetablePlayer(double [] wavetable, double [] destbuffer, double referenceFrequency)
     {
         this.wavetable = wavetable;
         this.destbuffer = destbuffer;
         this.referenceFrequency = referenceFrequency;
+    }
+
+    // Assume that wavetable contains a single period, override it if you need it to contain something more
+    public WavetablePlayer(double [] wavetable, double [] destbuffer) :
+        this(wavetable, destbuffer, 44100.0 / wavetable.Length)
+    {
+
     }
 
     public void NoteOn()

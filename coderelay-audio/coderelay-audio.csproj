@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Arguments.cs" />
+    <Compile Include="Generate.cs" />
     <Compile Include="Instrument.cs" />
     <Compile Include="MathUtil.cs" />
     <Compile Include="TableUtils.cs" />
