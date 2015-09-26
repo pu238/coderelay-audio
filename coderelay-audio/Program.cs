@@ -70,7 +70,10 @@ class Program
         }
         spansPLayer.NoteOff();
 
-        double[] finalData = Mixer.Mix(spansRandomData); //guitar.ToArray()
+        double[] finalData = Mixer.Mix(SampleRate,
+            new MixerInput(TimeSpan.FromSeconds(0), spansRandomData),
+            new MixerInput(TimeSpan.FromSeconds(3), squareData),
+            new MixerInput(TimeSpan.FromSeconds(6), guitar.ToArray()));
 
         // Generate file
         WavFile.WriteFile(arguments.Output, SampleRate, finalData, finalData);

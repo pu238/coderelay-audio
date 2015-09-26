@@ -2,23 +2,42 @@
 using System.Collections.Generic;
 using System.Linq;
 
-class Mixer
+struct MixerInput
 {
-    public static double[] Mix(params Func<IList<double>>[] sampleGenerators)
+    public readonly TimeSpan Offset;
+    public readonly IList<double> Samples;
+
+    public MixerInput(TimeSpan offset, IList<double> samples)
     {
-        return Mix(sampleGenerators.Select(f => f()).ToArray());
+        Offset = offset;
+        Samples = samples;
     }
 
-    public static double[] Mix(params IList<double>[] sampleBuffers)
+    public static implicit operator MixerInput(double[] samples)
     {
-        var outputLength = sampleBuffers.Max(a => a.Count);
+        return new MixerInput(TimeSpan.Zero, samples);
+    }
+}
+
+class Mixer
+{
+    public static double[] Mix(int sampleRate, params Func<MixerInput>[] inputGenerators)
+    {
+        return Mix(sampleRate, inputGenerators.Select(f => f()).ToArray());
+    }
+
+    public static double[] Mix(int sampleRate, params MixerInput[] inputs)
+    {
+        var outputLength = inputs.Max(i => (int)(i.Offset.TotalSeconds * sampleRate) + i.Samples.Count);
         var output = new double[outputLength];
 
-        foreach (var samples in sampleBuffers)
+        foreach (var input in inputs)
         {
-            for (var i = 0; i < samples.Count; i++)
+            var offset = (int)(input.Offset.TotalSeconds * sampleRate);
+
+            for (var i = 0; i < input.Samples.Count; i++, offset++)
             {
-                output[i] += samples[i];
+                output[offset] += input.Samples[i];
             }
         }
 
