@@ -56,7 +56,21 @@ class Program
             guitar.AddRange(Instrument.String(SampleRate * rand.Next(1, 5), rand.Next(50, 700), rand.Next(1, 10), i));
         }
 
-        double[] finalData = Mixer.Mix(squareData); //guitar.ToArray()
+        var spansTones = 40;
+        var spansToneLength = 4000;
+        var spansTrackLength = spansTones * spansToneLength;
+        var spansRandomData = new double[spansTrackLength];
+        var spansPLayer = new WavetablePlayer(Generate.Saw(200), spansRandomData);
+
+        spansPLayer.NoteOn();
+        for (int i = 0; i < spansTones; i++)
+        {
+            spansPLayer.SetNote(randomNotes.Next(60, 71));
+            spansPLayer.Render(spansToneLength);
+        }
+        spansPLayer.NoteOff();
+
+        double[] finalData = Mixer.Mix(spansRandomData); //guitar.ToArray()
 
         // Generate file
         WavFile.WriteFile(arguments.Output, SampleRate, finalData, finalData);
