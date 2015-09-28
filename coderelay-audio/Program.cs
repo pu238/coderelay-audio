@@ -19,8 +19,8 @@ class Program
         Random randomNotes = new Random(111);
 
         // Fill a buffer with square wave
-        double[] squareData = new double[trackLength];
-        WavetablePlayer squareChanel = new WavetablePlayer(Generate.Saw(tableSamples), squareData);
+        double[] sawData = new double[trackLength];
+        WavetablePlayer sawChannel = new WavetablePlayer(Generate.Saw(tableSamples), sawData);
 
         int[,] chords = new int[,] {
             { 70, 62, 67, 62 },
@@ -35,16 +35,17 @@ class Program
 
             for (int j = 0; j < 4; ++j)
             {
-                squareChanel.NoteOn();
-                squareChanel.SetNote(chords[chord, 0]);
-                squareChanel.Render(toneLength);
-                squareChanel.SetNote(chords[chord, 1]);
-                squareChanel.Render(toneLength);
-                squareChanel.SetNote(chords[chord, 2]);
-                squareChanel.Render(toneLength);
-                squareChanel.SetNote(chords[chord, 3]);
-                squareChanel.Render(toneLength);
-                squareChanel.NoteOff();
+
+                sawChannel.NoteOn();
+                sawChannel.SetNote(chords[chord, 0]);
+                sawChannel.Render(toneLength);
+                sawChannel.SetNote(chords[chord, 1]);
+                sawChannel.Render(toneLength);
+                sawChannel.SetNote(chords[chord, 2]);
+                sawChannel.Render(toneLength);
+                sawChannel.SetNote(chords[chord, 3]);
+                sawChannel.Render(toneLength);
+                sawChannel.NoteOff();
             }
         }
 
@@ -60,20 +61,20 @@ class Program
         var spansToneLength = 4000;
         var spansTrackLength = spansTones * spansToneLength;
         var spansRandomData = new double[spansTrackLength];
-        var spansPLayer = new WavetablePlayer(Generate.Saw(200), spansRandomData);
+        var spansPLayer = new WavetablePlayer(Generate.Sine(200), spansRandomData);
 
         spansPLayer.NoteOn();
         for (int i = 0; i < spansTones; i++)
         {
-            spansPLayer.SetNote(randomNotes.Next(60, 71));
+            spansPLayer.GlideToNote(randomNotes.Next(60, 71), spansToneLength);
             spansPLayer.Render(spansToneLength);
         }
         spansPLayer.NoteOff();
 
         double[] finalData = Mixer.Mix(SampleRate,
             new MixerInput(TimeSpan.FromSeconds(0), spansRandomData),
-            new MixerInput(TimeSpan.FromSeconds(3), squareData),
-            new MixerInput(TimeSpan.FromSeconds(6), guitar.ToArray()));
+            new MixerInput(TimeSpan.FromSeconds(4), sawData),
+            new MixerInput(TimeSpan.FromSeconds(11.5), guitar.ToArray()));
 
         // Generate file
         WavFile.WriteFile(arguments.Output, SampleRate, finalData, finalData);

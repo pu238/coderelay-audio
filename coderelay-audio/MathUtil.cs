@@ -4,7 +4,7 @@ class MathUtils
 {
     public static double Lerp(double a, double b, double f)
     {
-        return a * f + b * (1.0 - f);
+        return a * (1.0 - f) + b * f;
     }
 
     public static double MidiNoteToFrequency(int note)

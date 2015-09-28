@@ -2,12 +2,18 @@
 {
     double[] wavetable;
     double[] destbuffer;
+    double referenceFrequency;
+
     long destOffset = 0;
     bool on;
 
-    double speed = 1.0;
+    double currentSpeed = 1.0;
     double srcOffset = 0.0;
-    double referenceFrequency;
+
+    double glideFromSpeed = 1.0;
+    double glideToSpeed = 1.0;
+    long glideDuration = 0;
+    long glideElapsed = 0;
 
     // Wavetable should be a short looping sample that crosses 0 at the start and end, destbuffer is the render destination
     public WavetablePlayer(double [] wavetable, double [] destbuffer, double referenceFrequency)
@@ -37,14 +43,38 @@
     // TODO: implement table reference pitch and pitch offset calc and replace this with SetTone?
     public void SetSpeed(double speed)
     {
-        this.speed = speed;
+        this.currentSpeed = speed;
+
+        StopGlide();
     }
 
     public void SetNote(int note)
     {
-        double noteFrequency = MathUtils.MidiNoteToFrequency(note);
+        currentSpeed = GetSpeedForNote(note);
 
-        speed = noteFrequency / referenceFrequency;
+        StopGlide();
+    }
+
+    double GetSpeedForNote(int note)
+    {
+        double noteFrequency = MathUtils.MidiNoteToFrequency(note);
+        return noteFrequency / referenceFrequency;
+    }
+
+    void StopGlide()
+    {
+        glideFromSpeed = currentSpeed;
+        glideToSpeed = currentSpeed;
+        glideDuration = 0;
+        glideElapsed = 0;
+    }
+
+    public void GlideToNote(int note, long duration)
+    {
+        glideFromSpeed = currentSpeed;
+        glideToSpeed = GetSpeedForNote(note);
+        glideDuration = duration;
+        glideElapsed = 0;
     }
 
     public void Render(int samples)
@@ -60,8 +90,19 @@
             //  keep playing it to the end so we don't clip
             if (srcOffset > 0.0 || on)
             {
+
+                if (glideDuration > 0)
+                {
+                    glideElapsed++;
+                    currentSpeed = MathUtils.Lerp(glideFromSpeed, glideToSpeed, (double)glideElapsed / (double)glideDuration);
+                    {
+                        if (glideElapsed >= glideDuration)
+                            StopGlide();
+                    }
+                }
+
                 destbuffer[destOffset] = TableUtils.Sample(wavetable, srcOffset);
-                srcOffset = srcOffset + speed;
+                srcOffset = srcOffset + currentSpeed;
 
                 // Loop if note still on
                 if (on)
