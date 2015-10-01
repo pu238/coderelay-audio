@@ -17,6 +17,16 @@ struct MixerInput
     {
         return new MixerInput(TimeSpan.Zero, samples);
     }
+
+    public static implicit operator MixerInput(List<double> samples)
+    {
+        return new MixerInput(TimeSpan.Zero, samples);
+    }
+
+    public MixerInput OffsetBy(TimeSpan offset)
+    {
+        return new MixerInput(Offset + offset, Samples);
+    }
 }
 
 class Mixer
