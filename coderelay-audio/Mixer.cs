@@ -31,11 +31,6 @@ struct MixerInput
 
 class Mixer
 {
-    public static double[] Mix(int sampleRate, params Func<MixerInput>[] inputGenerators)
-    {
-        return Mix(sampleRate, inputGenerators.Select(f => f()).ToArray());
-    }
-
     public static double[] Mix(int sampleRate, params MixerInput[] inputs)
     {
         var outputLength = inputs.Max(i => (int)(i.Offset.TotalSeconds * sampleRate) + i.Samples.Count);
@@ -50,12 +45,28 @@ class Mixer
                 output[offset] += input.Samples[i];
             }
         }
-
-        var peak = output.Select(Math.Abs).Max();
+        
+        var peak = 1.0;
 
         for (var i = 0; i < outputLength; i++)
         {
-            output[i] /= peak;
+            var end = Math.Min(i + 128, outputLength);
+            var nextPeak = 1.0;
+
+            for (var j = i; j < end; j++)
+            {
+                var abs = Math.Abs(output[j]);
+                if (abs > nextPeak)
+                    nextPeak = abs;
+            }
+
+            if (nextPeak > peak)
+                peak += (nextPeak - peak) * 0.25;
+
+            if (nextPeak < peak)
+                peak = Math.Max(peak * 0.995, 1);
+
+            output[i] = MathUtils.Clamp(output[i] / peak, -1, 1);
         }
 
         return output;

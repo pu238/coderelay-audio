@@ -34,7 +34,8 @@ class Program
         var toneLength = 4000;
         var trackLength = tones * toneLength;
         var data = new double[trackLength];
-        var player = new WavetablePlayer(Generate.Combine(Generate.Saw(200), Generate.Square(200)), data);
+        var table = TableUtils.Multiply(TableUtils.Add(Generate.Saw(200), TableUtils.Multiply(Generate.Square(200), -1)), 0.5);
+        var player = new WavetablePlayer(table, data);
         //var player = new WavetablePlayer(Generate.Saw(200), data);
 
         player.NoteOn();
