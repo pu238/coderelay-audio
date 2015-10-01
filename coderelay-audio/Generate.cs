@@ -1,7 +1,16 @@
 ﻿using System;
+using System.Linq;
 
 class Generate
 {
+    public static double[] Combine(double[] wave1, double[] wave2)
+    {
+        if (wave1.Length != wave2.Length)
+            throw new ArgumentException("Wave array lengths aren't equal");
+
+        return wave1.Select((sample, index) => (sample + wave2[index]) / 2d).ToArray();
+    }
+
     public static double[] Sine(long length)
     {
         // Generate a single sine wave period

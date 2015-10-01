@@ -12,9 +12,10 @@ class Program
 
         // Mix input samples
         double[] finalData = Mixer.Mix(SampleRate,
-            RandomNotes().OffsetBy(TimeSpan.FromSeconds(0)),
-            Aerodynamic().OffsetBy(TimeSpan.FromSeconds(4)),
-            RandomGuitar().OffsetBy(TimeSpan.FromSeconds(11.5)));
+            CombinedNotes().OffsetBy(TimeSpan.FromSeconds(0)),
+            RandomNotes().OffsetBy(TimeSpan.FromSeconds(1)),
+            Aerodynamic().OffsetBy(TimeSpan.FromSeconds(5)),
+            RandomGuitar().OffsetBy(TimeSpan.FromSeconds(12.5)));
 
         // Generate file
         WavFile.WriteFile(arguments.Output, SampleRate, finalData, finalData);
@@ -27,10 +28,31 @@ class Program
         }
     }
 
+    static MixerInput CombinedNotes()
+    {
+        var tones = 10;
+        var toneLength = 4000;
+        var trackLength = tones * toneLength;
+        var data = new double[trackLength];
+        var player = new WavetablePlayer(Generate.Combine(Generate.Saw(200), Generate.Square(200)), data);
+        //var player = new WavetablePlayer(Generate.Saw(200), data);
+
+        player.NoteOn();
+        for (var i = 0; i < tones; i++)
+        {
+            player.SetNote(60);
+            player.Render(toneLength);
+        }
+        player.NoteOff();
+
+        return data;
+    }
+
     static MixerInput RandomNotes()
     {
-        Random randomNotes = new Random(111); var spansTones = 40;
+        Random randomNotes = new Random(111);
 
+        var spansTones = 40;
         var spansToneLength = 4000;
         var spansTrackLength = spansTones * spansToneLength;
         var spansRandomData = new double[spansTrackLength];
