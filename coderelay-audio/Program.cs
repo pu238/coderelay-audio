@@ -12,10 +12,11 @@ class Program
 
         // Mix input samples
         double[] finalData = Mixer.Mix(SampleRate,
-            CombinedNotes().OffsetBy(TimeSpan.FromSeconds(0)),
-            RandomNotes().OffsetBy(TimeSpan.FromSeconds(1)),
-            Aerodynamic().OffsetBy(TimeSpan.FromSeconds(5)),
-            RandomGuitar().OffsetBy(TimeSpan.FromSeconds(12.5)));
+            //CombinedNotes().OffsetBy(TimeSpan.FromSeconds(0)),
+            //RandomNotes().OffsetBy(TimeSpan.FromSeconds(1)),
+            SongUsingTrack().OffsetBy(TimeSpan.FromSeconds(0)),
+            Aerodynamic().OffsetBy(TimeSpan.FromSeconds(14)),
+            RandomGuitar().OffsetBy(TimeSpan.FromSeconds(21.5)));
 
         // Generate file
         WavFile.WriteFile(arguments.Output, SampleRate, finalData, finalData);
@@ -107,6 +108,49 @@ class Program
         }
 
         return sawData;
+    }
+
+    static MixerInput SongUsingTrack()
+    {
+        double[] data = new double[14*44100];
+        WavetablePlayer sawInstrument = new WavetablePlayer(TableUtils.Multiply(Generate.Saw(200), 0.5), data);
+        // These notes are taken from the melody of some random tracker file I found floating around my hdd, ub-lgnd.xm
+        // I have no idea who the original author is :(
+        TrackNode[] trackData = new TrackNode[64];
+        trackData[0] = new TrackNode(95);               //B6
+        trackData[2] = new TrackNode(93);               //A6
+        trackData[4] = new TrackNode(95);               //B6
+        trackData[6] = new TrackNode(93);               //A6
+        trackData[8] = new TrackNode(91);               //G6
+        trackData[10] = new TrackNode(0, false, true);  //-- 
+        trackData[12] = new TrackNode(93);              //A6
+        trackData[14] = new TrackNode(0, false, true);  //--
+        trackData[16] = new TrackNode(90);              //F#6
+        trackData[18] = new TrackNode(88);              //E6
+        trackData[20] = new TrackNode(90);              //F#6
+        trackData[22] = new TrackNode(83);              //B5
+        trackData[24] = new TrackNode(90);              //F#6
+        trackData[26] = new TrackNode(91);              //G6
+        trackData[28] = new TrackNode(0, false, true);  //--
+        trackData[32] = new TrackNode(88);              //E6
+        trackData[34] = new TrackNode(83);              //B5
+        trackData[36] = new TrackNode(90);              //F#6
+        trackData[38] = new TrackNode(91);              //G6
+        trackData[40] = new TrackNode(88);              //E6
+        trackData[41] = new TrackNode(90);              //F#6
+        trackData[46] = new TrackNode(86);              //D6
+        trackData[47] = new TrackNode(86);              //D6
+        trackData[48] = new TrackNode(88);              //E6
+        trackData[52] = new TrackNode(0, false, true);  //--
+        trackData[56] = new TrackNode(91);              //G6
+        trackData[58] = new TrackNode(0, false, true);  //--
+        trackData[60] = new TrackNode(96);              //C7
+        trackData[62] = new TrackNode(0, false, true);  // --
+
+        for (int i = 0; i < 2; ++i)
+            Track.Play(trackData, sawInstrument, 10.0);
+
+        return data;
     }
 
     static MixerInput RandomGuitar()
