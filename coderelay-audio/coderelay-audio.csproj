@@ -47,6 +47,7 @@
     <Compile Include="Generate.cs" />
     <Compile Include="Instrument.cs" />
     <Compile Include="MathUtil.cs" />
+    <Compile Include="Midi.cs" />
     <Compile Include="Track.cs" />
     <Compile Include="TableUtils.cs" />
     <Compile Include="WavetablePlayer.cs" />
