@@ -71,4 +71,20 @@ class TableUtils
 
         return output;
     }
+
+    public static double[] Corrupt(double[] table, double amount, int seed = 1337)
+    {
+        var output = new double[table.Length];
+        var rand = new Random(seed);
+
+        for (var i = 0; i < output.Length; i++)
+        {
+            // the formula is rand * (max - min) + min
+            // max = amount, min = -amount
+            // below is the same as rand * (amount - -amount) + -amount
+            output[i] = table[i] + (rand.NextDouble() * (amount * 2) - amount);
+        }
+
+        return output;
+    }
 }

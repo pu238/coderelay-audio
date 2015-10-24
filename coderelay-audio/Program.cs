@@ -113,7 +113,7 @@ class Program
     static MixerInput SongUsingTrack()
     {
         double[] data = new double[14*44100];
-        WavetablePlayer sawInstrument = new WavetablePlayer(TableUtils.Multiply(Generate.Saw(200), 0.5), data);
+        WavetablePlayer sawInstrument = new WavetablePlayer(TableUtils.Corrupt(TableUtils.Multiply(Generate.Saw(200), 0.5), 0.5), data);
         sawInstrument.Envelope = new ADSRWavetableEnvelope(0.25, 0.25, 0.8, 0.5);
         // These notes are taken from the melody of some random tracker file I found floating around my hdd, ub-lgnd.xm
         // I have no idea who the original author is :(
