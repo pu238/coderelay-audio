@@ -5,7 +5,6 @@
     double referenceFrequency;
 
     long destOffset = 0;
-    bool on;
 
     double currentSpeed = 1.0;
     double srcOffset = 0.0;
@@ -21,23 +20,29 @@
         this.wavetable = wavetable;
         this.destbuffer = destbuffer;
         this.referenceFrequency = referenceFrequency;
+        this.Envelope = new ADSRWavetableEnvelope(0.0, 0.0, 1.0, 0.0);
     }
 
     // Assume that wavetable contains a single period, override it if you need it to contain something more
-    public WavetablePlayer(double [] wavetable, double [] destbuffer) :
+    public WavetablePlayer(double[] wavetable, double[] destbuffer) :
         this(wavetable, destbuffer, 44100.0 / wavetable.Length)
     {
 
     }
 
+    public IWaveTableEnvelope Envelope
+    {
+        get; set;
+    }
+
     public void NoteOn()
     {
-        on = true;
+        Envelope.NoteOn();
     }
 
     public void NoteOff()
     {
-        on = false;
+        Envelope.NoteOff();
     }
 
     // TODO: implement table reference pitch and pitch offset calc and replace this with SetTone?
@@ -88,7 +93,7 @@
         {
             // Only start playing the sample if 'on' is set, otherwise if we're mid sample,
             //  keep playing it to the end so we don't clip
-            if (srcOffset > 0.0 || on)
+            if (srcOffset > 0.0 || Envelope.IsPlaying())
             {
 
                 if (glideDuration > 0)
@@ -101,11 +106,11 @@
                     }
                 }
 
-                destbuffer[destOffset] = TableUtils.Sample(wavetable, srcOffset);
+                destbuffer[destOffset] = TableUtils.Sample(wavetable, srcOffset) * Envelope.Sample();
                 srcOffset = srcOffset + currentSpeed;
 
                 // Loop if note still on
-                if (on)
+                if (Envelope.IsPlaying())
                 {
                     srcOffset = srcOffset % wavetable.Length;
                 }

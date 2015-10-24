@@ -114,6 +114,7 @@ class Program
     {
         double[] data = new double[14*44100];
         WavetablePlayer sawInstrument = new WavetablePlayer(TableUtils.Multiply(Generate.Saw(200), 0.5), data);
+        sawInstrument.Envelope = new ADSRWavetableEnvelope(0.25, 0.25, 0.8, 0.5);
         // These notes are taken from the melody of some random tracker file I found floating around my hdd, ub-lgnd.xm
         // I have no idea who the original author is :(
         TrackNode[] trackData = new TrackNode[64];
@@ -149,6 +150,9 @@ class Program
 
         for (int i = 0; i < 2; ++i)
             Track.Play(trackData, sawInstrument, 10.0);
+
+        // Render some leadout time
+        sawInstrument.Render(44100);
 
         return data;
     }
