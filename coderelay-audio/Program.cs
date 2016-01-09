@@ -15,7 +15,7 @@ class Program
             //CombinedNotes().OffsetBy(TimeSpan.FromSeconds(0)),
             //RandomNotes().OffsetBy(TimeSpan.FromSeconds(1)),
             SongUsingTrack().OffsetBy(TimeSpan.FromSeconds(0)),
-            Aerodynamic().OffsetBy(TimeSpan.FromSeconds(14)),
+            Aerodynamic().OffsetBy(TimeSpan.FromSeconds(20)),
             RandomGuitar().OffsetBy(TimeSpan.FromSeconds(21.5)));
 
         // Generate file
@@ -112,9 +112,15 @@ class Program
 
     static MixerInput SongUsingTrack()
     {
-        double[] data = new double[14*44100];
-        WavetablePlayer sawInstrument = new WavetablePlayer(TableUtils.Corrupt(TableUtils.Multiply(Generate.Saw(200), 0.5), 0.5), data);
-        sawInstrument.Envelope = new ADSRWavetableEnvelope(0.25, 0.25, 0.8, 0.5);
+        double[] data = new double[20*44100];
+        WavetablePlayer sawInstrument = new WavetablePlayer(Generate.Saw(200), data);
+        sawInstrument.Envelope = new ADSRWavetableEnvelope(0.25, 0.25, 0.8, 0.25);
+
+        LSystemNoteExecution executor = new LSystemNoteExecution();
+        LSystem lsystem = new LSystem(new LSystemRules(), executor);
+        lsystem.PerformIterationsAndExecute("n(A)n(C)n(A)n(D)", 2);
+        Track.Play(executor.TrackData.ToArray(), sawInstrument, 10.0);
+
         // These notes are taken from the melody of some random tracker file I found floating around my hdd, ub-lgnd.xm
         // I have no idea who the original author is :(
         TrackNode[] trackData = new TrackNode[64];
