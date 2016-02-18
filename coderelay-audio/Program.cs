@@ -116,7 +116,7 @@ class Program
         WavetablePlayer sawInstrument = new WavetablePlayer(Generate.Saw(200), data);
         sawInstrument.Envelope = new ADSRWavetableEnvelope(0.25, 0.25, 0.8, 0.25);
 
-        LSystemNoteExecution executor = new LSystemNoteExecution();
+        LSystemExecution executor = new LSystemExecution();
         LSystem lsystem = new LSystem(new LSystemRules(), executor);
         lsystem.PerformIterationsAndExecute("n(A)n(C)n(A)n(D)", 2);
         Track.Play(executor.TrackData.ToArray(), sawInstrument, 10.0);
