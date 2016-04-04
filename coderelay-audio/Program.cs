@@ -10,13 +10,17 @@ class Program
     {
         Arguments arguments = new Arguments(args);
 
+        Instruments.Instrument kit = new Instruments.BasicKit(75.0f, SampleRate);
+
         // Mix input samples
         double[] finalData = Mixer.Mix(SampleRate,
+            kit.GenerateAudio(20),
             //CombinedNotes().OffsetBy(TimeSpan.FromSeconds(0)),
             //RandomNotes().OffsetBy(TimeSpan.FromSeconds(1)),
             SongUsingTrack().OffsetBy(TimeSpan.FromSeconds(0)),
             Aerodynamic().OffsetBy(TimeSpan.FromSeconds(20)),
-            RandomGuitar().OffsetBy(TimeSpan.FromSeconds(21.5)));
+            RandomGuitar().OffsetBy(TimeSpan.FromSeconds(21.5))
+            );
 
         // Generate file
         WavFile.WriteFile(arguments.Output, SampleRate, finalData, finalData);

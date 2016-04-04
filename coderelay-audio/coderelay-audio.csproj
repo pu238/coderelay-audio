@@ -44,6 +44,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Arguments.cs" />
+    <Compile Include="Instruments\BasicKit.cs" />
+    <Compile Include="Instruments\Instrument.cs" />
     <Compile Include="LSystem.cs" />
     <Compile Include="Midi.cs" />
     <Compile Include="WaveTableEnvelope.cs" />
